@@ -2,19 +2,24 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
+	"text/template"
 )
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		tmlp, err := template.ParseFiles("index.html")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+
+		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+			tmlp, err := template.ParseFiles("index.html")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			tmlp.Execute(w, nil)
+		} else {
+			fmt.Fprint(w, "Url no found:")
 		}
-		tmlp.Execute(w, nil)
 
 	default:
 		fmt.Fprint(w, "Unsupperted method:", r.Method)
